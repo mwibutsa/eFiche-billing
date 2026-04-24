@@ -1,9 +1,15 @@
-import { Payment, PaymentStatus } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import { Badge } from '@/components/ui/Badge';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { History, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Payment, PaymentStatus } from "@/lib/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { History, CheckCircle2, Clock, XCircle } from "lucide-react";
 
 interface PaymentHistoryProps {
   payments: Payment[];
@@ -12,10 +18,14 @@ interface PaymentHistoryProps {
 export function PaymentHistory({ payments }: PaymentHistoryProps) {
   const getStatusIcon = (status: PaymentStatus) => {
     switch (status) {
-      case PaymentStatus.Confirmed: return <CheckCircle2 className="h-4 w-4 text-emerald-500" />;
-      case PaymentStatus.Pending: return <Clock className="h-4 w-4 text-amber-500" />;
-      case PaymentStatus.Failed: return <XCircle className="h-4 w-4 text-red-500" />;
-      default: return null;
+      case PaymentStatus.Confirmed:
+        return <CheckCircle2 className="h-4 w-4 text-emerald-500" />;
+      case PaymentStatus.Pending:
+        return <Clock className="h-4 w-4 text-amber-500" />;
+      case PaymentStatus.Failed:
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return null;
     }
   };
 
@@ -52,10 +62,18 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
           <TableBody>
             {payments.map((payment) => (
               <TableRow key={payment.id}>
-                <TableCell className="text-xs whitespace-nowrap">{formatDate(payment.created_at)}</TableCell>
-                <TableCell className="capitalize">{payment.method.replace('_', ' ')}</TableCell>
-                <TableCell className="text-xs font-mono text-slate-500">{payment.transaction_ref || '-'}</TableCell>
-                <TableCell className="text-right font-semibold">{formatCurrency(payment.amount)}</TableCell>
+                <TableCell className="text-xs whitespace-nowrap">
+                  {formatDate(payment.created_at)}
+                </TableCell>
+                <TableCell className="capitalize">
+                  {payment.method.replace("_", " ")}
+                </TableCell>
+                <TableCell className="text-xs font-mono text-slate-500">
+                  {payment.transaction_ref || "-"}
+                </TableCell>
+                <TableCell className="text-right font-semibold">
+                  {formatCurrency(payment.amount)}
+                </TableCell>
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center">
                     {getStatusIcon(payment.status)}

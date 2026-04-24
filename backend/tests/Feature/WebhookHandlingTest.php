@@ -7,6 +7,7 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Models\WebhookEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,6 +16,7 @@ class WebhookHandlingTest extends TestCase
     use RefreshDatabase;
 
     private Invoice $invoice;
+
     private Payment $pendingPayment;
 
     protected function setUp(): void
@@ -73,7 +75,7 @@ class WebhookHandlingTest extends TestCase
         $this->postJson('/api/webhooks/efichepay', $payload, [
             'X-EfichePay-Signature' => $signature,
         ]);
-        $this->assertEquals(1, \App\Models\WebhookEvent::count());
+        $this->assertEquals(1, WebhookEvent::count());
 
         // Second call with same eventId
         $response = $this->postJson('/api/webhooks/efichepay', $payload, [
@@ -81,7 +83,7 @@ class WebhookHandlingTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertEquals(1, \App\Models\WebhookEvent::count());
+        $this->assertEquals(1, WebhookEvent::count());
         $this->assertEquals(PaymentStatus::Confirmed, $this->pendingPayment->fresh()->status);
     }
 

@@ -1,29 +1,24 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { Visit } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Loader2, User, Calendar, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+import { Visit } from "@/lib/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Loader2, User, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
-  const { data: visits, isLoading } = useQuery<Visit[]>({
-    queryKey: ['visits'],
+  const { isLoading } = useQuery<Visit[]>({
+    queryKey: ["visits"],
     queryFn: async () => {
-      // For now, let's just assume we have a way to list visits.
-      // Since I didn't create a 'list visits' endpoint specifically, 
-      // I'll just use a placeholder or create one.
-      // Let's assume we can fetch them.
       try {
-        const { data } = await api.get('/visits'); // I need to add this to the backend
+        const { data } = await api.get("/visits");
         return data.data;
-      } catch (e) {
+      } catch {
         return [];
       }
-    }
+    },
   });
 
   if (isLoading) {
@@ -38,8 +33,12 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex flex-col space-y-2">
-          <h1 className="text-4xl font-extrabold tracking-tight">eFiche Billing</h1>
-          <p className="text-slate-500">Facility Patient Billing Management System</p>
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            eFiche Billing
+          </h1>
+          <p className="text-slate-500">
+            Facility Patient Billing Management System
+          </p>
         </div>
 
         <div className="grid gap-6">
@@ -49,10 +48,10 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-slate-600 dark:text-slate-400">
-                This is the prototype for the Facility Patient Billing Module. 
-                You can access a patient's billing page by their Visit ID.
+                This is the prototype for the Facility Patient Billing Module.
+                You can access a patient&apos;s billing page by their Visit ID.
               </p>
-              
+
               <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-100 dark:border-blue-900/30">
                 <h4 className="font-bold text-blue-900 dark:text-blue-100 mb-4 flex items-center">
                   <ArrowRight className="h-4 w-4 mr-2" />
@@ -66,7 +65,9 @@ export default function HomePage() {
                       </div>
                       <div>
                         <p className="font-semibold text-sm">Jean Baptiste</p>
-                        <p className="text-xs text-slate-400">Visit Status: Open</p>
+                        <p className="text-xs text-slate-400">
+                          Visit Status: Open
+                        </p>
                       </div>
                     </div>
                     <Link href="/visits/019dbfbd-0ccf-735e-b7ac-175e58974576/billing">
@@ -81,7 +82,9 @@ export default function HomePage() {
                       </div>
                       <div>
                         <p className="font-semibold text-sm">Alice Umutoni</p>
-                        <p className="text-xs text-slate-400">Visit Status: Billed</p>
+                        <p className="text-xs text-slate-400">
+                          Visit Status: Billed
+                        </p>
                       </div>
                     </div>
                     <Link href="/visits/019dbfbd-0cd2-72a2-bb56-2c4a6423f819/billing">
@@ -93,8 +96,9 @@ export default function HomePage() {
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                 <p className="text-xs text-slate-400 italic">
-                  Note: The Visit IDs above are from the latest database seeding. 
-                  If you refreshed the database, these might need to be updated.
+                  Note: The Visit IDs above are from the latest database
+                  seeding. If you refreshed the database, these might need to be
+                  updated.
                 </p>
               </div>
             </CardContent>

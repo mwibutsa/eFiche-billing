@@ -8,6 +8,7 @@ use App\Enums\WebhookEventStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\WebhookEvent;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -18,6 +19,7 @@ class WebhookService
         $eventId = $payload['eventId'] ?? null;
         if (! $eventId) {
             Log::warning('Webhook payload missing eventId', ['payload' => $payload]);
+
             return;
         }
 
@@ -37,16 +39,19 @@ class WebhookService
             // If it wasn't recently created, it's a duplicate.
             if (! $event->wasRecentlyCreated) {
                 Log::info('Duplicate webhook event received', ['event_id' => $eventId]);
+
                 return;
             }
-        } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+        } catch (UniqueConstraintViolationException $e) {
             // Another thread already inserted it.
             Log::info('Duplicate webhook event received (caught unique constraint)', ['event_id' => $eventId]);
+
             return;
         }
 
         if (($payload['status'] ?? '') !== 'PAYMENT_COMPLETE') {
             $event->update(['status' => WebhookEventStatus::Processed]);
+
             return;
         }
 
@@ -58,10 +63,11 @@ class WebhookService
                 'status' => WebhookEventStatus::Failed,
                 'error_message' => 'Missing orderNumber (transaction_ref)',
             ]);
+
             return;
         }
 
-        DB::transaction(function () use ($transactionRef, $amountReceived, $event) {
+        DB::transaction(function () use ($transactionRef, $event) {
             // Find the pending payment by transaction_ref
             // Notice: The webhook sends 'orderNumber' which might correspond to the Payment's transaction_ref or Invoice's transaction_ref.
             // Let's assume it corresponds to the Payment's transaction_ref.
@@ -72,12 +78,14 @@ class WebhookService
                     'status' => WebhookEventStatus::Failed,
                     'error_message' => "Payment with transaction_ref {$transactionRef} not found.",
                 ]);
+
                 return;
             }
 
             if ($payment->status === PaymentStatus::Confirmed) {
                 // Already confirmed
                 $event->update(['status' => WebhookEventStatus::Processed]);
+
                 return;
             }
 

@@ -31,6 +31,7 @@ class PaymentController extends Controller
 
         try {
             $payment = $this->paymentService->processPayment($invoice, $paymentData);
+
             return response()->json(['data' => $payment], 201);
         } catch (InvoiceAlreadyPaidException $e) {
             return response()->json(['message' => $e->getMessage()], 422);

@@ -1,37 +1,37 @@
 export enum InvoiceStatus {
-  Pending = 'pending',
-  Paid = 'paid',
-  PartiallyPaid = 'partially_paid',
-  Cancelled = 'cancelled',
+  Pending = "pending",
+  Paid = "paid",
+  PartiallyPaid = "partially_paid",
+  Cancelled = "cancelled",
 }
 
 export enum PaymentMethod {
-  Cash = 'cash',
-  MobileMoney = 'mobile_money',
-  BankTransfer = 'bank_transfer',
-  Insurance = 'insurance',
+  Cash = "cash",
+  MobileMoney = "mobile_money",
+  BankTransfer = "bank_transfer",
+  Insurance = "insurance",
 }
 
 export enum PaymentStatus {
-  Pending = 'pending',
-  Confirmed = 'confirmed',
-  Failed = 'failed',
-  Refunded = 'refunded',
+  Pending = "pending",
+  Confirmed = "confirmed",
+  Failed = "failed",
+  Refunded = "refunded",
 }
 
 export enum VisitStatus {
-  Open = 'open',
-  Billed = 'billed',
-  Discharged = 'discharged',
+  Open = "open",
+  Billed = "billed",
+  Discharged = "discharged",
 }
 
 export enum InvoiceItemCategory {
-  Consultation = 'consultation',
-  Medication = 'medication',
-  LabTest = 'lab_test',
-  Procedure = 'procedure',
-  Accommodation = 'accommodation',
-  Other = 'other',
+  Consultation = "consultation",
+  Medication = "medication",
+  LabTest = "lab_test",
+  Procedure = "procedure",
+  Accommodation = "accommodation",
+  Other = "other",
 }
 
 export interface Insurance {
@@ -81,9 +81,16 @@ export interface Payment {
   status: PaymentStatus;
   cashier_id: number;
   transaction_ref?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   confirmed_at?: string;
   created_at: string;
+}
+
+export interface BillingItem {
+  description: string;
+  category: InvoiceItemCategory;
+  quantity: number;
+  unit_price: number;
 }
 
 export interface Invoice {

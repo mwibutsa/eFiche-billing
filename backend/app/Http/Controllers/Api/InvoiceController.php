@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\DTOs\InvoiceItemData;
 use App\Enums\InvoiceItemCategory;
+use App\Enums\VisitStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateInvoiceRequest;
-use App\Models\Invoice;
 use App\Models\Visit;
 use App\Services\InvoiceService;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +21,7 @@ class InvoiceController extends Controller
     {
         $visit = Visit::findOrFail($visitId);
 
-        if ($visit->status !== \App\Enums\VisitStatus::Open) {
+        if ($visit->status !== VisitStatus::Open) {
             return response()->json(['message' => 'Visit is not open for billing.'], 422);
         }
 

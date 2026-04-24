@@ -14,6 +14,7 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         $amount = $this->faker->randomFloat(2, 1000, 50000);
+
         return [
             'visit_id' => Visit::factory(),
             'total_amount' => $amount,

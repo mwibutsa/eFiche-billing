@@ -12,7 +12,7 @@ class FacilityFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company() . ' Hospital',
+            'name' => $this->faker->company().' Hospital',
             'code' => $this->faker->unique()->bothify('FAC-####'),
             'address' => $this->faker->address(),
             'phone' => $this->faker->phoneNumber(),

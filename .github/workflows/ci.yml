@@ -84,7 +84,7 @@ jobs:
 
       - name: Run tests
         working-directory: backend
-        run: php artisan test --parallel
+        run: php artisan test
         env:
           DB_DATABASE: efiche_billing_test
 
