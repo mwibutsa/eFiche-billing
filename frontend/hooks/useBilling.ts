@@ -1,10 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '@/lib/api';
-import { Visit, Invoice, Insurance, PaymentMethod, BillingItem } from '@/lib/types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/api";
+import {
+  Visit,
+  Invoice,
+  Insurance,
+  PaymentMethod,
+  BillingItem,
+} from "@/lib/types";
 
 export function useVisit(visitId: string) {
   return useQuery<Visit>({
-    queryKey: ['visit', visitId],
+    queryKey: ["visit", visitId],
     queryFn: async () => {
       const { data } = await api.get(`/visits/${visitId}`);
       return data.data;
@@ -15,7 +21,7 @@ export function useVisit(visitId: string) {
 
 export function useInvoice(invoiceId: string) {
   return useQuery<Invoice>({
-    queryKey: ['invoice', invoiceId],
+    queryKey: ["invoice", invoiceId],
     queryFn: async () => {
       const { data } = await api.get(`/invoices/${invoiceId}`);
       return data.data;
@@ -31,7 +37,7 @@ export function useInvoice(invoiceId: string) {
 
 export function useFacilityInsurances(facilityId: string) {
   return useQuery<Insurance[]>({
-    queryKey: ['insurances', facilityId],
+    queryKey: ["insurances", facilityId],
     queryFn: async () => {
       const { data } = await api.get(`/facilities/${facilityId}/insurances`);
       return data.data;
@@ -43,12 +49,18 @@ export function useFacilityInsurances(facilityId: string) {
 export function useCreateInvoice() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ visitId, items }: { visitId: string; items: BillingItem[] }) => {
+    mutationFn: async ({
+      visitId,
+      items,
+    }: {
+      visitId: string;
+      items: BillingItem[];
+    }) => {
       const { data } = await api.post(`/visits/${visitId}/invoices`, { items });
       return data.data;
     },
     onSuccess: (_, { visitId }) => {
-      queryClient.invalidateQueries({ queryKey: ['visit', visitId] });
+      queryClient.invalidateQueries({ queryKey: ["visit", visitId] });
     },
   });
 }
@@ -56,12 +68,23 @@ export function useCreateInvoice() {
 export function useProcessPayment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ invoiceId, amount, method }: { invoiceId: string; amount: number; method: PaymentMethod }) => {
-      const { data } = await api.post(`/invoices/${invoiceId}/payments`, { amount, method });
+    mutationFn: async ({
+      invoiceId,
+      amount,
+      method,
+    }: {
+      invoiceId: string;
+      amount: number;
+      method: PaymentMethod;
+    }) => {
+      const { data } = await api.post(`/invoices/${invoiceId}/payments`, {
+        amount,
+        method,
+      });
       return data.data;
     },
     onSuccess: (_, { invoiceId }) => {
-      queryClient.invalidateQueries({ queryKey: ['invoice', invoiceId] });
+      queryClient.invalidateQueries({ queryKey: ["invoice", invoiceId] });
     },
   });
 }
