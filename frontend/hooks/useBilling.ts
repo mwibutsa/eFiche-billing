@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
-import { Visit, Invoice, Payment, Insurance, PaymentMethod } from '@/lib/types';
+import { Visit, Invoice, Insurance, PaymentMethod, BillingItem } from '@/lib/types';
 
 export function useVisit(visitId: string) {
   return useQuery<Visit>({
@@ -43,7 +43,7 @@ export function useFacilityInsurances(facilityId: string) {
 export function useCreateInvoice() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ visitId, items }: { visitId: string; items: any[] }) => {
+    mutationFn: async ({ visitId, items }: { visitId: string; items: BillingItem[] }) => {
       const { data } = await api.post(`/visits/${visitId}/invoices`, { items });
       return data.data;
     },

@@ -1,6 +1,5 @@
 import { Patient, Visit } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { User, Shield, IdCard } from 'lucide-react';
 
 interface PatientInfoProps {

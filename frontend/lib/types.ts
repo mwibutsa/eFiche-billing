@@ -81,9 +81,16 @@ export interface Payment {
   status: PaymentStatus;
   cashier_id: number;
   transaction_ref?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   confirmed_at?: string;
   created_at: string;
+}
+
+export interface BillingItem {
+  description: string;
+  category: InvoiceItemCategory;
+  quantity: number;
+  unit_price: number;
 }
 
 export interface Invoice {

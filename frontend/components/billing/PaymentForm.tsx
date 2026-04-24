@@ -3,7 +3,6 @@ import { PaymentMethod } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
 import { useProcessPayment } from '@/hooks/useBilling';
 import { CreditCard, Banknote, Smartphone, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -31,7 +30,7 @@ export function PaymentForm({ invoiceId, remainingBalance }: PaymentFormProps) {
         setIsSuccess(true);
         setTimeout(() => setIsSuccess(false), 3000);
       }
-    } catch (err) {
+    } catch {
       // Error handled by mutation
     }
   };
@@ -118,7 +117,7 @@ export function PaymentForm({ invoiceId, remainingBalance }: PaymentFormProps) {
               
               {processPayment.isError && (
                 <p className="text-sm text-red-500 text-center mt-2">
-                  {(processPayment.error as any)?.response?.data?.message || 'Payment failed. Please try again.'}
+                  {(processPayment.error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Payment failed. Please try again.'}
                 </p>
               )}
             </div>

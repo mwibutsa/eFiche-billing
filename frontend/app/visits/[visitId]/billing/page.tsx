@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useVisit, useInvoice, useCreateInvoice } from '@/hooks/useBilling';
 import { PatientInfo } from '@/components/billing/PatientInfo';
@@ -8,18 +9,17 @@ import { PaymentForm } from '@/components/billing/PaymentForm';
 import { PaymentHistory } from '@/components/billing/PaymentHistory';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { useState } from 'react';
-import { InvoiceItemCategory } from '@/lib/types';
-import { ReceiptText, Plus, Trash2, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { InvoiceItemCategory, BillingItem } from '@/lib/types';
+import { ReceiptText, Plus, Trash2, ArrowLeft, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function BillingPage() {
   const { visitId } = useParams() as { visitId: string };
   const { data: visit, isLoading: isLoadingVisit, isError: isErrorVisit } = useVisit(visitId);
-  const { data: invoice, isLoading: isLoadingInvoice } = useInvoice(visit?.invoice?.id || '');
+  const { data: invoice } = useInvoice(visit?.invoice?.id || '');
   const createInvoice = useCreateInvoice();
 
-  const [items, setItems] = useState<any[]>([
+  const [items, setItems] = useState<BillingItem[]>([
     { description: '', category: InvoiceItemCategory.Consultation, quantity: 1, unit_price: 0 }
   ]);
 
@@ -31,7 +31,7 @@ export default function BillingPage() {
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
+  const updateItem = (index: number, field: keyof BillingItem, value: string | number) => {
     const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
     setItems(newItems);
@@ -40,7 +40,7 @@ export default function BillingPage() {
   const handleCreateInvoice = async () => {
     try {
       await createInvoice.mutateAsync({ visitId, items });
-    } catch (err) {
+    } catch {
       // Error handled by mutation
     }
   };

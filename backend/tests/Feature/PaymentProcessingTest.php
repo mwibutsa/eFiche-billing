@@ -6,8 +6,8 @@ use App\Enums\InvoiceStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Invoice;
-use App\Models\User;
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -17,6 +17,7 @@ class PaymentProcessingTest extends TestCase
     use RefreshDatabase;
 
     private User $cashier;
+
     private Invoice $invoice;
 
     protected function setUp(): void
@@ -115,7 +116,7 @@ class PaymentProcessingTest extends TestCase
             'method' => PaymentMethod::MobileMoney->value,
             'status' => PaymentStatus::Pending,
         ]);
-        
+
         // Invoice status shouldn't change yet
         $this->assertEquals(InvoiceStatus::Pending, $this->invoice->fresh()->status);
     }

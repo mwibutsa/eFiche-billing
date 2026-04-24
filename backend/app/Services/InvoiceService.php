@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\DTOs\InvoiceItemData;
 use App\Enums\InvoiceStatus;
+use App\Enums\VisitStatus;
 use App\Models\Invoice;
 use App\Models\Visit;
 use Illuminate\Support\Facades\DB;
@@ -10,9 +12,7 @@ use Illuminate\Support\Facades\DB;
 class InvoiceService
 {
     /**
-     * @param Visit $visit
-     * @param \App\DTOs\InvoiceItemData[] $items
-     * @return Invoice
+     * @param  InvoiceItemData[]  $items
      */
     public function createInvoice(Visit $visit, array $items): Invoice
     {
@@ -37,7 +37,7 @@ class InvoiceService
 
             $invoice->items()->createMany($itemsData);
 
-            $visit->update(['status' => \App\Enums\VisitStatus::Billed]);
+            $visit->update(['status' => VisitStatus::Billed]);
 
             return $invoice->load('items');
         });

@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Enums\InvoiceItemCategory;
 use App\Enums\VisitStatus;
 use App\Models\Facility;
-use App\Models\Patient;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,7 +16,9 @@ class InvoiceCreationTest extends TestCase
     use RefreshDatabase;
 
     private User $cashier;
+
     private Facility $facility;
+
     private Visit $visit;
 
     protected function setUp(): void
@@ -75,7 +76,7 @@ class InvoiceCreationTest extends TestCase
     {
         $payload = [
             'items' => [
-                ['description' => 'Test', 'category' => 'consultation', 'quantity' => 1, 'unit_price' => 1000]
+                ['description' => 'Test', 'category' => 'consultation', 'quantity' => 1, 'unit_price' => 1000],
             ],
         ];
 
@@ -95,7 +96,7 @@ class InvoiceCreationTest extends TestCase
 
         $payload = [
             'items' => [
-                ['description' => 'Test', 'category' => 'consultation', 'quantity' => 1, 'unit_price' => 1000]
+                ['description' => 'Test', 'category' => 'consultation', 'quantity' => 1, 'unit_price' => 1000],
             ],
         ];
 
