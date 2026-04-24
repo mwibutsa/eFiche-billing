@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  DB_CONNECTION: pgsql
+  DB_HOST: 127.0.0.1
+  DB_PORT: 5432
+  DB_DATABASE: efiche_billing_test
+  DB_USERNAME: efiche
+  DB_PASSWORD: efiche_secret
+  EFICHEPAY_WEBHOOK_SECRET: whsec_ci_test_secret
+
+jobs:
+  backend-lint:
+    name: Backend Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_pgsql, zip
+
+      - name: Install dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run Pint
+        working-directory: backend
+        run: ./vendor/bin/pint --test
+
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: efiche_billing_test
+          POSTGRES_USER: efiche
+          POSTGRES_PASSWORD: efiche_secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U efiche -d efiche_billing_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_pgsql, zip
+          coverage: xdebug
+
+      - name: Install dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Copy env
+        working-directory: backend
+        run: cp .env.example .env
+
+      - name: Generate key
+        working-directory: backend
+        run: php artisan key:generate
+
+      - name: Run migrations
+        working-directory: backend
+        run: php artisan migrate --force
+        env:
+          DB_DATABASE: efiche_billing_test
+
+      - name: Run tests
+        working-directory: backend
+        run: php artisan test --parallel
+        env:
+          DB_DATABASE: efiche_billing_test
+
+  frontend-lint:
+    name: Frontend Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Check formatting
+        working-directory: frontend
+        run: npx prettier --check "**/*.{ts,tsx,css,json}"
+
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm test -- --passWithNoTests
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000/api
+          NEXT_PUBLIC_PAYMENT_POLL_INTERVAL: "5000"

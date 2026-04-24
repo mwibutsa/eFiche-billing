@@ -1,0 +1,409 @@
+name: Endpoints
+description: ''
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/user
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/visits/{visit}/invoices'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      visit:
+        custom: []
+        name: visit
+        description: 'The visit.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      visit: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      items:
+        custom: []
+        name: items
+        description: 'Must have at least 1 items.'
+        required: true
+        example:
+          - []
+        type: 'object[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'items[].description':
+        custom: []
+        name: 'items[].description'
+        description: 'Must not be greater than 255 characters.'
+        required: true
+        example: 'Eius et animi quos velit et.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'items[].category':
+        custom: []
+        name: 'items[].category'
+        description: ''
+        required: true
+        example: lab_test
+        type: string
+        enumValues:
+          - consultation
+          - lab_test
+          - medication
+          - procedure
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'items[].quantity':
+        custom: []
+        name: 'items[].quantity'
+        description: 'Must be at least 1.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'items[].unit_price':
+        custom: []
+        name: 'items[].unit_price'
+        description: 'Must be at least 0.'
+        required: true
+        example: 42
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      items:
+        -
+          description: 'Eius et animi quos velit et.'
+          category: lab_test
+          quantity: 16
+          unit_price: 42
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/invoices/{invoice}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      invoice:
+        custom: []
+        name: invoice
+        description: 'The invoice.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      invoice: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/invoices/{invoice}/payments'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      invoice:
+        custom: []
+        name: invoice
+        description: 'The invoice.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      invoice: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      amount:
+        custom: []
+        name: amount
+        description: 'Must be at least 0.01.'
+        required: true
+        example: 27
+        type: number
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      method:
+        custom: []
+        name: method
+        description: ''
+        required: true
+        example: cash
+        type: string
+        enumValues:
+          - cash
+          - mobile_money
+          - insurance
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      amount: 27
+      method: cash
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/facilities/{facility}/insurances'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      facility:
+        custom: []
+        name: facility
+        description: 'The facility.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      facility: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/visits/{visit}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      visit:
+        custom: []
+        name: visit
+        description: 'The visit.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      visit: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/webhooks/efichepay
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null

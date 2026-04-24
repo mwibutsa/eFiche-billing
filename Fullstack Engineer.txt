@@ -1,0 +1,121 @@
+﻿Senior Fullstack Software Engineer 
+Stack: Laravel, PostgreSQL + Next.js 15 + TypeScript 
+Context 
+Consider a backend written in Laravel modular monolith handling patient visits, billing, insurance, and multi-facility operations across clinics ranging from Kigali hospitals to rural health posts with intermittent connectivity. 
+The billing module is one of the most operationally critical pieces of the system. A cashier who cannot process a payment means a patient who cannot leave. A double-charge caused by a race condition is a compliance incident. A missed webhook means a payment that looks pending forever. 
+You are not being asked to build a toy. You are being asked to demonstrate how you think about a real problem under real constraints. 
+The Reality 
+Read this code snippet carefully. 
+PHP 
+// InvoiceController.php 
+public function processPayment(Request $request, $visitId) 
+{ 
+ $visit = Visit::findOrFail($visitId); 
+ $invoice = Invoice::where('visit_id', $visitId) 
+ ->where('status', 'pending') 
+->firstOrFail(); 
+ $totalPaid = Payment::where('invoice_id', $invoice->id)->sum('amount');  $remaining = $invoice->total_amount - $totalPaid; 
+ if ($request->amount > $remaining) { 
+ return response()->json(['error' => 'Overpayment not allowed'], 422);  } 
+ $payment = Payment::create([ 
+ 'invoice_id' => $invoice->id, 
+ 'amount' => $request->amount,
+ 'method' => $request->method, // 'cash', 'mobile_money', 'insurance' 
+ 'cashier_id' => auth()->id(), 
+ 'status' => 'confirmed', 
+ ]); 
+ if ($totalPaid + $request->amount >= $invoice->total_amount) {  $invoice->update(['status' => 'paid']); 
+ } 
+ return response()->json(['payment' => $payment]); 
+} 
+And here is a webhook that would handle mobile money payment 
+PHP 
+// WebhookController.php 
+public function handleEfichePayWebhook(Request $request) 
+{ 
+ $payload = $request->all(); 
+ $signature = $request->header('X-EfichePay-Signature'); 
+ $existing = WebhookEvent::where('event_id', $payload['eventId'])->first();  if ($existing) { 
+ return response()->json(['status' => 'already_processed']);  } 
+ WebhookEvent::create([ 
+ 'event_id' => $payload['eventId'], 
+ 'payload' => json_encode($payload), 
+ 'status' => 'received', 
+ ]); 
+ if ($payload['status'] === 'PAYMENT_COMPLETE') { 
+ $invoice = Invoice::where('transaction_ref', $payload['orderNumber'])->first(); 
+ if ($invoice) { 
+ $invoice->update(['status' => 'paid']); 
+ Payment::create([ 
+ 'invoice_id' => $invoice->id, 
+ 'amount' => $payload['amount'] / 100, 
+ 'method' => 'mobile_money', 
+ 'status' => 'confirmed',
+ ]); 
+ } 
+ } 
+ return response()->json(['status' => 'ok']); 
+} 
+And here is a frontend insurance filter used on the billing page: 
+TypeScript 
+// BillingPage.tsx 
+const COVERED_INSURANCES = [1, 3, 5, 7, 9]; 
+const applicableInsurances = allInsurances.filter(ins => 
+ COVERED_INSURANCES.includes(ins.id) 
+); 
+The Challenge 
+You are tasked with designing and building a Facility Patient Billing Module for eFiche. The module must handle: 
+1. Visit-based billing where a single visit can have multiple line items (lab tests, consultations, medications) 
+2. Multi-cashier concurrency, two cashiers at the same facility may attempt to process payments against the same invoice simultaneously 
+3. Insurance coverage that is configured per-facility, not globally 
+      4. Mobile money payment confirmation that arrives asynchronously via webhook (seconds to minutes after initiation) 
+5. Partial offline functionality, the system must remain usable when internet connectivity is intermittent
+Deliverables 
+1. Code Review, Critique the Provided Snippets (written, ~500 words) 
+Review all three code snippets above and answer: 
+a) The race condition. Identify the exact race condition in processPayment. Under what scenario does it produce incorrect data? Write the corrected version using PostgreSQL-level locking. Explain why application-level checks alone are insufficient here. 
+b) The webhook idempotency bug. The deduplication check in handleEfichePayWebhook has a critical flaw that will cause duplicate payments under realistic conditions. Identify it precisely. Explain what happens when a webhook is delivered twice within 50 milliseconds. Propose a fix that is atomic. (Hint: think about what the model's $fillable array has to do with this.) 
+Critique of InvoiceController.php: processPayment
+The current implementation of processPayment suffers from a "check-then-act" race condition. When two cashiers process payments for the same invoice simultaneously, both may read the same $remaining balance before either has created a payment record. This allows both requests to pass the validation check, resulting in a total payment that exceeds the invoice amount. To fix this, PostgreSQL-level row locking (FOR UPDATE) should be used on the invoice record within a database transaction to ensure only one process can calculate and update the balance at a time.
+Critique of WebhookController.php: handleEfichePayWebhook
+The idempotency check in handleEfichePayWebhook is non-atomic. If two identical webhook notifications arrive within milliseconds, both might find that $existing is null and proceed to create duplicate payment records. The fix requires a unique database constraint on event_id and ensuring the event_id is included in the model's $fillable array. Utilizing an atomic updateOrCreate or handling the database exception on duplicate insertion ensures true idempotency.
+Critique of BillingPage.tsx
+The use of a hardcoded COVERED_INSURANCES array is a "Hardcoded Configuration" anti-pattern. This makes the system rigid and requires a code deployment every time a facility changes its insurance partnerships. In a multi-facility environment, this configuration must reside in the database, associated with each specific facility. The frontend should consume this via a filtered API endpoint, allowing for dynamic updates without redeploying the application.
+c) The insurance hardcode. The COVERED_INSURANCES = [1, 3, 5, 7, 9] pattern is a symptom of an architectural decision, not just a lazy line of code. Name the pattern. Explain what category of production incident this causes (give a concrete scenario). Then describe the correct data model: where should this configuration live, who owns it, and how should the frontend consume it? 
+2. Design Document (~800–1200 words) 
+Write a design document covering: 
+a) Data model. Define the tables (or describe schema changes) needed to support: 
+- Visit invoices with line items 
+- Per-facility insurance configuration 
+- Payment records that distinguish between cash, mobile money (pending → confirmed async), and insurance claims 
+- Webhook event log with idempotency guarantees 
+You do not need to write full SQL, column names, types, and key constraints are sufficient.
+b) Concurrency strategy. How do you prevent two cashiers from overpaying an invoice? What locking strategy do you use? What is your rollback behavior? 
+c) Offline behavior contract. This is a rural clinic context with intermittent internet. Define precisely what "working offline" means for this module. Answer these explicitly: 
+- Can a cashier initiate a mobile money payment offline? Why or why not? - Can a cashier record a cash payment offline? What happens to that record when connectivity returns? 
+- What data must be available locally (cached/synced) for the billing page to render at all? 
+- What does the cashier see when a mobile money payment is in a "pending" state? What triggers the status update on their screen? 
+Do not describe a generic offline-first architecture. Describe the specific behavior for billing in a healthcare context where a wrong answer has patient impact. 
+d) What you would NOT build in V1. List at least four features or system behaviors that you consciously excluded from your V1 design, with a one-sentence justification for each exclusion. This section will be weighted heavily. Candidates who exclude nothing have not thought about scope. Candidates who exclude the wrong things have not understood the domain. 
+3. Working Prototype 
+Build a working implementation of the following two endpoints and their corresponding frontend view: 
+Backend (Laravel): 
+- POST /api/visits/{visitId}/invoices — create an invoice with line items for a visit - POST /api/invoices/{invoiceId}/payments — process a payment (cash or mobile money initiation), with correct concurrency handling 
+- POST /api/webhooks/efichepay — idempotent webhook handler that correctly confirms mobile money payments 
+Frontend (Next.js + TypeScript): 
+- A billing page for a visit that:
+- Shows invoice line items and remaining balance 
+- Shows insurance options fetched from the API (not hardcoded) - Shows payment status with real-time or polling-based updates for pending mobile money payments 
+- Handles the state where the invoice exists but payment is still pending (do not show a blank or broken page) 
+You do not need to integrate with the real eFichePay API. A stub or mock is acceptable, but the webhook handler must be real and must be testable by calling it directly. 
+4. README 
+Include a README with: 
+- How to run the project locally (Docker preferred) 
+- How to trigger the webhook manually to simulate a payment confirmation - Any known limitations or shortcuts you took and why 
+Submission 
+Send the following to tests@efiche.africa , cc: careers@efiche.africa with the subject line: eFiche Challenge-Fullstack Engineer — [Your Name] 
+- Link to a private GitHub or GitLab repository (add jeandedieuam@gmail.com , placideh@efiche.africa as a collaborator, or make it public temporarily) 
+- Your design document (Markdown or PDF) 
+- Your README 
+- Your "what I did NOT build" section, written clearly and specifically, not as a bullet dump 
+Good Luck.
