@@ -18,6 +18,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  Badge,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -79,7 +80,7 @@ export default function BillingPage() {
       <div className="flex-1 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
-          <p className="text-slate-500 font-medium">Loading visit data...</p>
+          <p className="text-slate-500 font-normal">Loading visit data...</p>
         </div>
       </div>
     );
@@ -88,13 +89,13 @@ export default function BillingPage() {
   if (isErrorVisit || !visit) {
     return (
       <div className="flex-1 flex items-center justify-center p-6">
-        <Card className="max-w-md w-full border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900/30">
+        <Card className="max-w-md w-full border-red-100 bg-red-50">
           <CardContent className="pt-6 text-center space-y-4">
             <AlertCircle className="h-12 w-12 text-red-600 mx-auto" />
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            <h3 className="text-xl font-normal text-slate-900">
               Visit Not Found
             </h3>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-slate-600">
               The visit you are looking for does not exist or has been removed.
             </p>
             <Link href="/" passHref>
@@ -109,26 +110,37 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="flex-1 overflow-auto bg-slate-50 dark:bg-slate-950 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="flex-1 overflow-auto bg-[#F8FAFC] p-4 md:p-10">
+      <div className="max-w-6xl mx-auto space-y-10">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-6">
             <Link
               href="/"
-              className="h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors dark:bg-slate-900 dark:border-slate-800"
+              className="h-12 w-12 flex items-center justify-center rounded-[4px] bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 transition-all"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-6 w-6" />
             </Link>
-            <h1 className="text-3xl font-extrabold tracking-tight">
-              Facility Billing
-            </h1>
+            <div>
+              <h1 className="text-4xl font-normal tracking-tight text-slate-900">
+                Patient Billing
+              </h1>
+              <p className="text-slate-500 font-normal text-sm">
+                Review clinical services and process payments.
+              </p>
+            </div>
           </div>
           <div className="hidden md:block text-right">
-            <p className="text-sm font-medium text-slate-500">
-              Date: {new Date().toLocaleDateString()}
+            <Badge className="mb-1 bg-white border-slate-200 text-slate-500 font-normal">
+              {new Date().toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </Badge>
+            <p className="text-[10px] font-normal text-slate-300 uppercase tracking-[0.2em]">
+              Ref: {visitId.split("-")[0]}
             </p>
-            <p className="text-xs text-slate-400">Visit ID: {visitId}</p>
           </div>
         </div>
 
@@ -137,39 +149,39 @@ export default function BillingPage() {
 
         {!visit.invoice ? (
           /* Invoice Creation Section */
-          <Card className="border-none shadow-xl">
-            <CardHeader className="border-b border-slate-100 dark:border-slate-800">
-              <CardTitle className="flex items-center">
-                <ReceiptText className="h-5 w-5 mr-2 text-blue-600" />
+          <Card className="border-none rounded-[4px] overflow-hidden bg-white">
+            <CardHeader className="bg-slate-50/50 p-8 border-b border-slate-100">
+              <CardTitle className="flex items-center text-2xl font-normal text-slate-900">
+                <ReceiptText className="h-7 w-7 mr-3 text-blue-600" />
                 Generate New Invoice
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
+            <CardContent className="p-8 space-y-8">
+              <div className="space-y-6">
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end animate-in fade-in slide-in-from-top-2 duration-300"
+                    className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end p-6 rounded-[4px] bg-slate-50/30 border border-slate-100 animate-in fade-in slide-in-from-top-2 duration-300"
                   >
                     <div className="md:col-span-4">
-                      <label className="text-xs font-bold text-slate-500 uppercase mb-1.5 block">
-                        Description
+                      <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-2 block">
+                        Service Description
                       </label>
                       <input
-                        className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:bg-slate-900 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                        className="w-full h-12 px-4 rounded-[4px] border border-slate-200 bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm font-normal text-slate-700 transition-all"
                         value={item.description}
                         onChange={(e) =>
                           updateItem(index, "description", e.target.value)
                         }
-                        placeholder="e.g. Consultation"
+                        placeholder="e.g. General Consultation"
                       />
                     </div>
                     <div className="md:col-span-3">
-                      <label className="text-xs font-bold text-slate-500 uppercase mb-1.5 block">
+                      <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-2 block">
                         Category
                       </label>
                       <select
-                        className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:bg-slate-900 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                        className="w-full h-12 px-4 rounded-[4px] border border-slate-200 bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm font-normal text-slate-700 transition-all appearance-none"
                         value={item.category}
                         onChange={(e) =>
                           updateItem(index, "category", e.target.value)
@@ -183,35 +195,35 @@ export default function BillingPage() {
                       </select>
                     </div>
                     <div className="md:col-span-1">
-                      <label className="text-xs font-bold text-slate-500 uppercase mb-1.5 block">
+                      <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-2 block">
                         Qty
                       </label>
                       <input
                         type="number"
-                        className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:bg-slate-900 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                        value={item.quantity}
+                        className="w-full h-12 px-4 rounded-[4px] border border-slate-200 bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm font-normal text-slate-700 transition-all"
+                        value={item.quantity || ""}
                         onChange={(e) =>
                           updateItem(
                             index,
                             "quantity",
-                            parseInt(e.target.value),
+                            parseInt(e.target.value) || 0,
                           )
                         }
                       />
                     </div>
                     <div className="md:col-span-3">
-                      <label className="text-xs font-bold text-slate-500 uppercase mb-1.5 block">
+                      <label className="text-[10px] font-normal text-slate-400 uppercase tracking-widest mb-2 block">
                         Unit Price (RWF)
                       </label>
                       <input
                         type="number"
-                        className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:bg-slate-900 dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                        value={item.unit_price}
+                        className="w-full h-12 px-4 rounded-[4px] border border-slate-200 bg-white focus:ring-2 focus:ring-blue-600 outline-none text-sm font-normal text-slate-700 transition-all"
+                        value={item.unit_price || ""}
                         onChange={(e) =>
                           updateItem(
                             index,
                             "unit_price",
-                            parseFloat(e.target.value),
+                            parseFloat(e.target.value) || 0,
                           )
                         }
                       />
@@ -231,17 +243,21 @@ export default function BillingPage() {
                 ))}
               </div>
 
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <Button variant="outline" onClick={addItem} className="group">
-                  <Plus className="h-4 w-4 mr-2 group-hover:rotate-90 transition-transform" />
-                  Add Another Item
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 pt-10 border-t border-slate-100">
+                <Button
+                  variant="outline"
+                  onClick={addItem}
+                  className="group h-12 rounded-[4px] px-6 border-slate-200 text-slate-600 font-normal hover:border-blue-600 hover:text-blue-600 transition-all"
+                >
+                  <Plus className="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform" />
+                  Add Service Item
                 </Button>
-                <div className="flex items-center space-x-4">
-                  <div className="text-right mr-4">
-                    <p className="text-xs text-slate-400 font-bold uppercase">
-                      Estimated Total
+                <div className="flex items-center gap-10">
+                  <div className="text-right">
+                    <p className="text-[10px] text-slate-400 font-normal uppercase tracking-[0.2em] mb-1">
+                      Grand Total
                     </p>
-                    <p className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                    <p className="text-4xl font-normal text-slate-900">
                       {new Intl.NumberFormat("en-RW", {
                         style: "currency",
                         currency: "RWF",
@@ -258,7 +274,7 @@ export default function BillingPage() {
                     size="lg"
                     onClick={handleCreateInvoice}
                     isLoading={createInvoice.isPending}
-                    className="px-10"
+                    className="h-16 px-12 rounded-[4px] bg-blue-600 hover:bg-blue-700 text-white font-normal text-lg "
                   >
                     Generate Invoice
                   </Button>
@@ -291,21 +307,21 @@ export default function BillingPage() {
                   remainingBalance={invoice.remaining_balance || "0"}
                 />
               ) : (
-                <Card className="border-none shadow-lg bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30">
+                <Card className="border-none bg-emerald-50 border-emerald-100">
                   <CardContent className="pt-6 text-center space-y-3">
-                    <div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center mx-auto">
+                    <div className="h-12 w-12 rounded-[4px] bg-emerald-100 flex items-center justify-center mx-auto">
                       <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                     </div>
-                    <h4 className="text-lg font-bold text-emerald-900 dark:text-emerald-100">
+                    <h4 className="text-lg font-normal text-emerald-900">
                       Fully Paid
                     </h4>
-                    <p className="text-sm text-emerald-700/70 dark:text-emerald-400/70">
+                    <p className="text-sm text-emerald-700/70">
                       This invoice has been settled in full. No further payments
                       are required.
                     </p>
                     <Button
                       variant="outline"
-                      className="w-full border-emerald-200 hover:bg-emerald-100 dark:border-emerald-900 dark:hover:bg-emerald-900/50"
+                      className="w-full border-emerald-200 hover:bg-emerald-100"
                     >
                       Print Receipt
                     </Button>
