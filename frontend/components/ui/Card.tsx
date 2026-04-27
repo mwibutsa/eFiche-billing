@@ -32,10 +32,7 @@ const CardTitle = ({
   ...props
 }: HTMLAttributes<HTMLHeadingElement>) => (
   <h3
-    className={cn(
-      "text-xl font-normal leading-none tracking-tight",
-      className,
-    )}
+    className={cn("text-xl font-normal leading-none tracking-tight", className)}
     {...props}
   />
 );
@@ -44,10 +41,7 @@ const CardDescription = ({
   className,
   ...props
 }: HTMLAttributes<HTMLParagraphElement>) => (
-  <p
-    className={cn("text-sm text-slate-500", className)}
-    {...props}
-  />
+  <p className={cn("text-sm text-slate-500", className)} {...props} />
 );
 
 const CardContent = ({
