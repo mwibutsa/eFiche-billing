@@ -31,7 +31,7 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
 
   if (!payments || payments.length === 0) {
     return (
-      <Card className="border-none shadow-md">
+      <Card className="border-none ">
         <CardContent className="flex flex-col items-center justify-center py-10 text-slate-400">
           <History className="h-10 w-10 mb-2 opacity-20" />
           <p>No payment history found.</p>
@@ -41,8 +41,8 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
   }
 
   return (
-    <Card className="border-none shadow-md overflow-hidden">
-      <CardHeader className="bg-slate-50/50 dark:bg-slate-800/20">
+    <Card className="border-none overflow-hidden">
+      <CardHeader className="bg-slate-50/50">
         <CardTitle className="text-lg flex items-center">
           <History className="h-5 w-5 mr-2 text-slate-500" />
           Payment History
@@ -71,7 +71,7 @@ export function PaymentHistory({ payments }: PaymentHistoryProps) {
                 <TableCell className="text-xs font-mono text-slate-500">
                   {payment.transaction_ref || "-"}
                 </TableCell>
-                <TableCell className="text-right font-semibold">
+                <TableCell className="text-right font-normal">
                   {formatCurrency(payment.amount)}
                 </TableCell>
                 <TableCell className="text-center">

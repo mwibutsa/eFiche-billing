@@ -19,6 +19,16 @@ export function useVisit(visitId: string) {
   });
 }
 
+export function useStats() {
+  return useQuery({
+    queryKey: ["stats"],
+    queryFn: async () => {
+      const { data } = await api.get("/stats");
+      return data.data;
+    },
+  });
+}
+
 export function useInvoice(invoiceId: string) {
   return useQuery<Invoice>({
     queryKey: ["invoice", invoiceId],

@@ -73,6 +73,16 @@ class PaymentService
                 throw new InsufficientBalanceException;
             }
 
+            // Prevent multiple pending mobile money initiations
+            $hasPending = $lockedInvoice->payments()
+                ->where('method', PaymentMethod::MobileMoney)
+                ->where('status', PaymentStatus::Pending)
+                ->exists();
+
+            if ($hasPending) {
+                throw new \Exception('A mobile money payment is already pending for this invoice.');
+            }
+
             $payment = Payment::create([
                 'invoice_id' => $lockedInvoice->id,
                 'amount' => $data->amount,

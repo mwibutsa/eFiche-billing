@@ -25,10 +25,7 @@ const TableHeader = forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn(
-      "[&_tr]:border-b bg-slate-50/50 dark:bg-slate-900/50",
-      className,
-    )}
+    className={cn("[&_tr]:border-b bg-slate-100 ", className)}
     {...props}
   />
 ));
@@ -53,7 +50,7 @@ const TableRow = forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-slate-100/50 data-[state=selected]:bg-slate-100 dark:hover:bg-slate-800/50 dark:data-[state=selected]:bg-slate-800",
+      "border-b transition-colors hover:bg-slate-100/50 data-[state=selected]:bg-slate-100  ",
       className,
     )}
     {...props}
@@ -68,7 +65,7 @@ const TableHead = forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-slate-500 dark:text-slate-400 [&:has([role=checkbox])]:pr-0",
+      "h-12 px-4 text-left align-middle font-normal text-slate-500  [&:has([role=checkbox])]:pr-0",
       className,
     )}
     {...props}

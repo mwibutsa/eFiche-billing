@@ -32,13 +32,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const variants = {
-      primary:
-        "bg-blue-600 text-white hover:bg-blue-700 shadow-sm active:scale-95",
-      secondary:
-        "bg-slate-200 text-slate-900 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
-      outline:
-        "border border-slate-300 bg-transparent hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800",
-      ghost: "bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800",
+      primary: "bg-blue-600 text-white hover:bg-blue-700 active:scale-95",
+      secondary: "bg-slate-200 text-slate-900 hover:bg-slate-300   ",
+      outline: "border border-slate-300 bg-transparent hover:bg-slate-100  ",
+      ghost: "bg-transparent hover:bg-slate-100 ",
       danger: "bg-red-600 text-white hover:bg-red-700 active:scale-95",
       success: "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-95",
     };
@@ -55,7 +52,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none",
+          "inline-flex items-center justify-center rounded-[4px] font-normal transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none",
           variants[variant],
           sizes[size],
           className,
@@ -63,7 +60,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <div className="mr-2 h-4 w-4 animate-spin rounded-[4px] border-2 border-white border-t-transparent" />
         ) : null}
         {children}
       </button>
